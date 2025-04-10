@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Dark Calculator | Saifullah-Mansoor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Import modern Google font */
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Kanit', sans-serif;
+    }
+    
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #121212;
+      color: #fff;
+    }
+    
+    .container {
+      position: relative;
+      max-width: 450px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 25px;
+      background: #1e1e1e;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+                  0 0 0 1px rgba(255, 255, 255, 0.05),
+                  inset 0 0 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+    
+    .display {
+      height: 100px;
+      width: 100%;
+      outline: none;
+      border: none;
+      text-align: right;
+      margin-bottom: 25px;
+      font-size: 42px;
+      font-weight: 300;
+      color: #fff;
+      background: #252525;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    }
+    
+    .buttons {
+      display: grid;
+      grid-gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .buttons button {
+      padding: 18px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 22px;
+      font-weight: 500;
+      cursor: pointer;
+      color: white;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Number buttons - neon colors */
+    button[data-value="7"] { background: linear-gradient(45deg, #6a11cb, #2575fc); }
+    button[data-value="8"] { background: linear-gradient(45deg, #11998e, #38ef7d); }
+    button[data-value="9"] { background: linear-gradient(45deg, #f12711, #f5af19); }
+    button[data-value="4"] { background: linear-gradient(45deg, #8e2de2, #4a00e0); }
+    button[data-value="5"] { background: linear-gradient(45deg, #f857a6, #ff5858); }
+    button[data-value="6"] { background: linear-gradient(45deg, #00b09b, #96c93d); }
+    button[data-value="1"] { background: linear-gradient(45deg, #ff0084, #33001b); }
+    button[data-value="2"] { background: linear-gradient(45deg, #fc00ff, #00dbde); }
+    button[data-value="3"] { background: linear-gradient(45deg, #ff416c, #ff4b2b); }
+    button[data-value="0"] { background: linear-gradient(45deg, #4776e6, #8e54e9); }
+    button[data-value="00"] { background: linear-gradient(45deg, #ff512f, #dd2476); }
+    button[data-value="."] { background: linear-gradient(45deg, #f79d00, #64f38c); }
+    
+    /* Operator buttons */
+    .operator {
+      background: linear-gradient(45deg, #4568dc, #b06ab3);
+      color: white;
+    }
+    
+    .equal {
+      background: linear-gradient(45deg, #ff00cc, #333399);
+      grid-column: span 1;
+    }
+    
+    .clear {
+      background: linear-gradient(45deg, #ff4b1f, #1fddff);
+    }
+    
+    .delete {
+      background: linear-gradient(45deg, #ff5e62, #ff9966);
+    }
+    
+    .buttons button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4),
+                  0 0 15px rgba(255, 255, 255, 0.1);
+      filter: brightness(1.1);
+    }
+    
+    .buttons button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .buttons button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .buttons button:hover::after {
+      opacity: 1;
+    }
+    
+    .brand {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Glow effect for active buttons */
+    .buttons button:focus {
+      outline: none;
+      box-shadow: 0 0 15px currentColor;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 350px) {
+      .container {
+        max-width: 280px;
+        padding: 20px;
+      }
+      
+      .display {
+        height: 80px;
+        font-size: 36px;
+      }
+      
+      .buttons button {
+        padding: 15px 0;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <input type="text" class="display" readonly />
+    <div class="buttons">
+      <button class="operator clear" data-value="AC">AC</button>
+      <button class="operator delete" data-value="DEL"><i class="fas fa-backspace"></i></button>
+      <button class="operator" data-value="%">%</button>
+      <button class="operator" data-value="/">÷</button>
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button class="operator" data-value="*">×</button>
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button class="operator" data-value="-">−</button>
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button class="operator" data-value="+">+</button>
+      <button data-value="0">0</button>
+      <button data-value="00">00</button>
+      <button data-value=".">.</button>
+      <button class="operator equal" data-value="=">=</button>
+    </div>
+    <div class="brand">SM CALCULATOR</div>
+  </div>
+  
+  <script>
+    const display = document.querySelector(".display");
+    const buttons = document.querySelectorAll("button");
+    const specialChars = ["%", "*", "/", "-", "+", "="];
+    let output = "";
+    
+    // Calculate function
+    const calculate = (btnValue) => {
+      if (btnValue === "=" && output !== "") {
+        output = eval(output.replace("%", "/100"));
+      } else if (btnValue === "AC") {
+        output = "";
+      } else if (btnValue === "DEL") {
+        output = output.toString().slice(0, -1);
+      } else {
+        if (output === "" && specialChars.includes(btnValue)) return;
+        output += btnValue;
+      }
+      display.value = output;
+    };
+    
+    // Button click events
+    buttons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        // Add pulse animation
+        button.style.animation = "pulse 0.3s";
+        setTimeout(() => {
+          button.style.animation = "";
+        }, 300);
+        
+        calculate(e.target.dataset.value);
+      });
+    });
+    
+    // Keyboard support
+    document.addEventListener("keydown", (e) => {
+      const key = e.key;
+      
+      if ((key >= "0" && key <= "9") || 
+          specialChars.includes(key) || 
+          key === "." || 
+          key === "Enter" || 
+          key === "Backspace" || 
+          key === "Escape") {
+        
+        e.preventDefault();
+        
+        if (key === "Enter") {
+          calculate("=");
+        } else if (key === "Backspace") {
+          calculate("DEL");
+        } else if (key === "Escape") {
+          calculate("AC");
+        } else {
+          calculate(key);
+        }
+        
+        // Visual feedback
+        const button = document.querySelector(`button[data-value="${key === "*" ? "×" : key === "/" ? "÷" : key === "Enter" ? "=" : key}"]`);
+        if (button) {
+          button.style.boxShadow = "0 0 15px currentColor";
+          setTimeout(() => {
+            button.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+          }, 200);
+        }
+      }
+    });
+    
+    // Add pulse animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
